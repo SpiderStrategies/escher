@@ -37,8 +37,8 @@
     v.$el.css({
       'margin-top': offset.top + this.opts.topOffset,
       'margin-left': offset.left + this.opts.leftOffset,
-      'width': '100%',
-      'height': '100%',
+      'width': last.$el.width() - this.opts.leftOffset,
+      'height': last.$el.height() - this.opts.topOffset,
       'position': 'absolute'
     })
 
