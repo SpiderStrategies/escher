@@ -75,10 +75,7 @@
     },
 
     close: function (e) {
-      var self = this
-      _.each(_.rest(views, _.indexOf(views, this.step)), function () {
-        self.escher.pop()
-      })
+      _.each(_.rest(views, _.indexOf(views, this.step)), this.escher.pop)
     },
 
     render: function () {
