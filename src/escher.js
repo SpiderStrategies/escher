@@ -11,19 +11,29 @@
     if (!opts.base) {
       throw new Error('Escher must receive the base view')
     }
-    this.base = opts.base
+    var base = opts.base
     // TODO: receive config options
-    this.views = []
+    this.views = [base]
+  }
+
+  Escher.prototype.base = function () {
+    return _.first(this.views)
   }
 
   Escher.prototype.push = function (view) {
-    this.base.$el.append(view.render().el)
+    this.base().$el.append(view.render().el)
+    var last = _.last(this.views)
+    last.undelegateEvents()
     this.views.push(view)
   }
 
   Escher.prototype.pop = function () {
-    var view = this.views.pop()
-    view.remove()
+    if (this.views.length) {
+      var view = this.views.pop()
+      view.remove()
+      var last = _.last(this.views)
+      last.delegateEvents()
+    }
   }
 
   Escher.prototype.length = function () {
