@@ -11,6 +11,11 @@
     if (!opts.base) {
       throw new Error('Escher must receive the base view')
     }
+    _.defaults(opts, {
+      topOffset: 10,
+      leftOffset: 5
+    })
+    this.opts = opts
     var base = opts.base
     // TODO: receive config options
     this.views = [base]
@@ -21,9 +26,24 @@
   }
 
   Escher.prototype.push = function (view) {
-    this.base().$el.append(view.render().el)
+    // Turn off events for the view below us
     var last = _.last(this.views)
     last.undelegateEvents()
+    var offset = last.$el.offset()
+
+    // Render the new view
+    var v = view.render()
+
+    v.$el.css({
+      'margin-top': offset.top + this.opts.topOffset,
+      'margin-left': offset.left + this.opts.leftOffset,
+      'width': '100%',
+      'height': '100%',
+      'position': 'absolute'
+    })
+
+    // Place it appropriately
+    last.$el.after(v.el)
     this.views.push(view)
   }
 
