@@ -7,8 +7,6 @@
 
   "use strict"
 
-  var views = []
-
   var Escher = function (opts) {
     if (!opts.base) {
       throw new Error('Escher must receive the base view')
@@ -19,11 +17,11 @@
       leftOffset: 5
     })
     this.opts = opts
-    views.push(opts.base)
+    this.views = [opts.base]
   }
 
   Escher.prototype.push = function (view) {
-    var last = _.last(views)
+    var last = _.last(this.views)
     // Turn off events for the view below us
     last.undelegateEvents()
     // And add the retreat link
@@ -42,20 +40,20 @@
 
     // Place it appropriately
     last.$el.after(v.el)
-    views.push(view)
+    this.views.push(view)
   }
 
   Escher.prototype.pop = function () {
-    if (views.length > 1) {
-      views.pop().remove()
-      var last = _.last(views)
+    if (this.views.length > 1) {
+      this.views.pop().remove()
+      var last = _.last(this.views)
       last.delegateEvents()
       last.$('.escher-step-retreat').remove()
     }
   }
 
   Escher.prototype.length = function () {
-    return views.length
+    return this.views.length
   }
 
   var StepRetreat = Backbone.View.extend({
@@ -75,7 +73,10 @@
     },
 
     close: function (e) {
-      _.each(_.rest(views, _.indexOf(views, this.step)), this.escher.pop)
+      var self = this
+      _.each(_.rest(this.escher.views, _.indexOf(this.escher.views, this.step)), function () {
+        self.escher.pop()
+      })
     },
 
     render: function () {
