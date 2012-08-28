@@ -17,43 +17,76 @@
       leftOffset: 5
     })
     this.opts = opts
-    this.views = [opts.base]
+    this.steps = []
+    this._step(opts.base)
   }
 
-  Escher.prototype.push = function (view) {
-    var last = _.last(this.views)
-    // Turn off events for the view below us
-    last.undelegateEvents()
-    // And add the retreat link
-    last.$el.append(new StepRetreat({view: view, escher: this}).render().el)
+  Escher.prototype._step = function (view) {
+    var step = new Step(view)
+    step.index = this.steps.push(step) - 1
+    step.retreat.on('close', function () {
+      var self = this
+      _.each(_.rest(this.steps, _.indexOf(this.steps, step) + 1), function (i) {
+        self.pop()
+      })
+    }, this)
+  }
 
-    var offset = last.$el.offset()
-    var v = view.render()
+  Escher.prototype.push = function (view, rendered) {
+    // Drop the current step back
+    var last = _.last(this.steps).drop()
 
-    v.$el.css({
+    var offset = last.view.$el.offset()
+    // Render this view
+    view.render().$el.css({
       'margin-top': offset.top + this.opts.topOffset,
       'margin-left': offset.left + this.opts.leftOffset,
-      'width': last.$el.width() - this.opts.leftOffset,
-      'height': last.$el.height() - this.opts.topOffset,
+      'width': last.view.$el.width() - this.opts.leftOffset,
+      'height': last.view.$el.height() - this.opts.topOffset,
       'position': 'absolute'
     })
 
     // Place it appropriately
-    last.$el.after(v.el)
-    this.views.push(view)
+    last.view.$el.after(view.el)
+    this._step(view)
   }
 
   Escher.prototype.pop = function () {
-    if (this.views.length > 1) {
-      this.views.pop().remove()
-      var last = _.last(this.views)
-      last.delegateEvents()
-      last.$('.escher-step-retreat').remove()
+    if (this.steps.length > 1) {
+      this.steps.pop().destroy()
+      _.last(this.steps).rise()
     }
   }
 
   Escher.prototype.length = function () {
-    return this.views.length
+    return this.steps.length
+  }
+
+  var Step = function (view) {
+    this.view = view
+    this.retreat = new StepRetreat({step: this}).render()
+  }
+
+  Step.prototype.drop = function () {
+    // Disable our events
+    this.view.undelegateEvents()
+    // Add the retreat link
+    this.retreat.$el.show()
+    this.view.$el.append(this.retreat.$el)
+    return this
+  }
+
+  Step.prototype.destroy = function () {
+    this.view.undelegateEvents()
+    this.view.remove()
+    this.retreat.off('close')
+    this.retreat.remove()
+    this.retreat = null
+  }
+
+  Step.prototype.rise = function () {
+    this.view.delegateEvents()
+    this.retreat.$el.hide()
   }
 
   var StepRetreat = Backbone.View.extend({
@@ -68,15 +101,11 @@
     },
 
     initialize: function (opts) {
-      this.escher = opts.escher
-      this.step = opts.view
+      this.step = opts.step
     },
 
     close: function (e) {
-      var self = this
-      _.each(_.rest(this.escher.views, _.indexOf(this.escher.views, this.step)), function () {
-        self.escher.pop()
-      })
+      this.trigger('close')
     },
 
     render: function () {
