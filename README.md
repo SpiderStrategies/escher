@@ -20,7 +20,22 @@ Depends on [Underscore](http://underscorejs.org), [Backbone](http://backbonejs.o
 
 #### Using with AMD
 
-  TODO: Build a shim into the file.
+Define the path for escher and then you can require it.  Escher adds itself to Backbone, so the define returns backbone.
+
+```
+main.js
+ {
+  paths:
+    { escher: '/vendor/backbone/plugins/escher'}
+ }
+```
+
+Then simply require it, so it loads itself into backbone
+```
+define('core', ['escher'], function (Backbone) {
+  // Escher is loaded into backbone
+})
+```
 
 ### Usage
 
