@@ -14,7 +14,8 @@
     // TODO: receive other useful config options
     _.defaults(opts, {
       topOffset: 15,
-      leftOffset: 5
+      leftOffset: 5,
+      labelField: 'name'
     })
     this.opts = opts
     this.steps = []
@@ -22,7 +23,7 @@
   }
 
   Escher.prototype._step = function (view) {
-    var step = new Step(view)
+    var step = new Step(view, this.opts)
     step.index = this.steps.push(step) - 1
     step.retreat.on('close', function () {
       var self = this
@@ -62,9 +63,10 @@
     return this.steps.length
   }
 
-  var Step = function (view) {
+  var Step = function (view, opts) {
     this.view = view
-    this.retreat = new StepRetreat({step: this}).render()
+    this.opts = opts
+    this.retreat = new StepRetreat({step: this, label: view[opts.labelField]}).render()
   }
 
   Step.prototype.drop = function () {
@@ -102,6 +104,7 @@
 
     initialize: function (opts) {
       this.step = opts.step
+      this.label = opts.label
     },
 
     close: function (e) {
@@ -109,7 +112,7 @@
     },
 
     render: function () {
-      this.$el.html('<a href="#">' + this.step.name + '</a>')
+      this.$el.html('<a href="#">' + this.label + '</a>')
       return this
     }
   })
