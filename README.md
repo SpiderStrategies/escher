@@ -81,3 +81,16 @@ mcescher.pop()
 topOffset: 15
 leftOffset: 5
 labelField: 'name'
+
+#### Testing
+
+Tests use mocha and chai.assert.  Install these dependencies.
+
+```
+npm install -d
+```
+
+Run the tests
+```
+make test
+```
