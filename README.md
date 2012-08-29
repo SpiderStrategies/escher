@@ -8,8 +8,7 @@ Depends on [Underscore](http://underscorejs.org), [Backbone](http://backbonejs.o
 
 ### Download
 
-* [Development](https://raw.github.com/SpiderStrategies/escher/master/src/escher.js)
-* [Production -- Not yet]()
+Download the Dev or Prod (uglified) [vesions](https://raw.github.com/SpiderStrategies/escher/master/dist/).
 
 #### Non-AMD
 
