@@ -15,5 +15,9 @@
   ],
   "author": "Nathan Bowser <nathan.bowser@spiderstrategies.com>",
   "license": "BSD",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "~1.4.1",
+    "chai": "~1.2.0"
+  }
 }
