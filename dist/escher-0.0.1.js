@@ -1,3 +1,8 @@
+/*!
+ * escher.js v0.0.1 
+ * Copyright 2012, Spider Strategies <nathan.bowser@spiderstrategies.com> 
+ * escher.js may be freely distributed under the BSD license. 
+*/
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone'], factory)
