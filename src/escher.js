@@ -33,6 +33,14 @@
     }, this)
   }
 
+  Escher.prototype.top = function () {
+    return _.last(this.steps)
+  }
+
+  Escher.prototype.bottom = function () {
+    return _.first(this.steps)
+  }
+
   Escher.prototype.push = function (view, rendered) {
     // Drop the current step back
     var last = _.last(this.steps).drop()
