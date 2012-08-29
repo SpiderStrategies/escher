@@ -3,8 +3,13 @@
  * Copyright 2012, Spider Strategies <nathan.bowser@spiderstrategies.com>
  * escher.js may be freely distributed under the BSD license.
  */
-(function(window) {
-
+ (function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory)
+  } else {
+    factory(root.Backbone)
+  }
+}(this, function (Backbone) {
   "use strict"
 
   var Escher = function (opts) {
@@ -127,4 +132,5 @@
 
   Backbone.Escher = Escher
 
-})(this);
+  return Backbone
+}))
