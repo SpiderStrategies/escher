@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Escher : Stackable backbone views" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Escher</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/SpiderStrategies/escher">View on GitHub</a>
+
+          <h1 id="project_title">Escher</h1>
+          <h2 id="project_tagline">Stackable backbone views</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/SpiderStrategies/escher/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/SpiderStrategies/escher/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>Escher</h1>
+
+<h3>Stackable backbone views</h3>
+
+<p>Escher is a <a href="http://backbonejs.org">Backbone</a> extension for managing stacks of views. Views can be pushed or popped onto the stack. The stack builds views into a sheet-based UI.</p>
+
+<p>Depends on <a href="http://underscorejs.org">Underscore</a>, <a href="http://backbonejs.org">Backbone</a> and <a href="http://jquery.com">jQuery</a> -- the same dependencies backbone.</p>
+
+<h3>Download</h3>
+
+<ul>
+<li><a href="https://raw.github.com/SpiderStrategies/escher/master/src/escher.js">Development</a></li>
+<li><a href="">Production -- Not yet</a></li>
+</ul><h4>Non-AMD</h4>
+
+<pre><code>  &lt;!-- Include jquery, backbone, underscore --&gt;
+  &lt;script src="/assets/vendor/escher.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<h4>Using with AMD</h4>
+
+<p>TODO: Build a shim into the file.</p>
+
+<h3>Usage</h3>
+
+<p>Create a backbone view that will server as the base layer in the stack.</p>
+
+<pre><code>HelloView = Backbone.View.extend({
+  attributes: {
+    style: "width: 100%; height: 100%; position: absolute;"
+  },
+
+  render: function () {
+    this.$el.html('Hey ohh')
+    return this
+  }
+})
+
+var hv = new HelloView
+
+// Throw the view on the page
+$('#container').append(hv.render().el)
+</code></pre>
+
+<p>Create escher, passing it configuration settings.  At a bare minimum, pass it the base view.</p>
+
+<pre><code>var mcescher = Backbone.Escher({ base: hv })
+</code></pre>
+
+<p>Build a new view for the next layer.</p>
+
+<pre><code>Painting = Backbone.View.extend({
+
+  render: function () {
+    this.$el.html("Relativity is aweesome.")
+    return this
+  }
+
+})
+
+</code></pre>
+
+<p>And finally you can stack views...</p>
+
+<pre><code>mcescher.push(new Painting)
+</code></pre>
+
+<p>Remove the top view</p>
+
+<pre><code>mcescher.pop()
+</code></pre>
+
+<h3>Configuration</h3>
+
+<p>topOffset: 15
+leftOffset: 5
+labelField: 'name'</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Escher maintained by <a href="https://github.com/SpiderStrategies">SpiderStrategies</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
