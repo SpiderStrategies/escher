@@ -44,6 +44,53 @@ describe('Escher', function () {
     })
   })
 
+  describe('Events', function () {
+    var layer, escher
+    it('emits a view:activate event when a view is pushed', function (done) {
+      layer.on('view:activate', done)
+      escher.push(layer)
+    })
+
+    it('emits a view:activate event when a view is sent to the front of the stack', function (done) {
+      base.on('view:activate', done)
+      escher.push(layer)
+      escher.pop()
+    })
+
+    it('emits a view:deactivate event when a view is dropped', function (done) {
+      base.on('view:deactivate', done)
+      escher.push(layer)
+    })
+
+    it('emits a view:deactivate event when a view is popped', function (done) {
+      layer.on('view:deactivate', done)
+      escher.push(layer)
+      escher.pop()
+    })
+
+    it('emits a changed event when the stack changes', function (done) {
+      escher.on('changed', function () {
+        assert.equal(escher.length(), 2)
+        done()
+      })
+      escher.push(layer)
+    })
+
+    it('emits a changing event before the stack changes', function (done) {
+      escher.on('changing', function () {
+        assert.equal(escher.length(), 1)
+        done()
+      })
+      escher.push(layer)
+    })
+
+    beforeEach(function () {
+      escher = new Escher({ base: base })
+      var Layer = Backbone.View.extend({})
+      layer = new Layer
+    })
+  })
+
   describe('Push & Pop', function () {
     var escher, layer1;
 

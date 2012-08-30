@@ -22,9 +22,14 @@
     this._step(opts.base)
   }
 
+  Escher.prototype.on = Backbone.Events.on
+  Escher.prototype.off = Backbone.Events.off
+  Escher.prototype.trigger = Backbone.Events.trigger
+
   Escher.prototype._step = function (view) {
     var step = new Step(view, this.opts)
     view.$el.addClass('escher-step')
+    view.trigger('view:activate')
     step.index = this.steps.push(step) - 1
     step.retreat.on('close', function () {
       var self = this
@@ -43,6 +48,7 @@
   }
 
   Escher.prototype.push = function (view, rendered) {
+    this.trigger('changing')
     // Drop the current step back
     var last = _.last(this.steps).drop()
 
@@ -59,13 +65,16 @@
     // Place it appropriately
     last.view.$el.after(view.el)
     this._step(view)
+    this.trigger('changed')
   }
 
   Escher.prototype.pop = function () {
+    this.trigger('changing')
     if (this.steps.length > 1) {
       this.steps.pop().destroy()
       _.last(this.steps).rise()
     }
+    this.trigger('changed')
   }
 
   Escher.prototype.length = function () {
@@ -84,6 +93,7 @@
     // Add the retreat link
     this.retreat.$el.show()
     this.view.$el.append(this.retreat.$el)
+    this.view.trigger('view:deactivate')
     return this
   }
 
@@ -91,6 +101,7 @@
     this.view.undelegateEvents()
     this.view.$el.removeClass('escher-step')
     this.view.remove()
+    this.view.trigger('view:deactivate')
     this.retreat.off('close')
     this.retreat.remove()
     this.retreat = null
@@ -99,6 +110,7 @@
   Step.prototype.rise = function () {
     this.view.delegateEvents()
     this.retreat.$el.hide()
+    this.view.trigger('view:activate')
   }
 
   var StepRetreat = Backbone.View.extend({

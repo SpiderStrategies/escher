@@ -92,6 +92,12 @@ mcescher.pop()
 
 Each retreat link is wrapped by a div with a classname of **escher-step-retreat**, so it can be styled.  Every view managed by escher will have a classname of **escher-step** applied.
 
+#### Events
+Backbone.View#view:activate -> Fired when a view is on top of the stack.
+Backbone.View#view:deactivate -> Fired when a view is popped or dropped back on the stack.
+Escher#changing -> Fired before the stack changes.
+Escher#changed -> Fired after the stack has changed state.
+
 ### Configuration
 
 topOffset: 15
