@@ -60,6 +60,11 @@ describe('Escher', function () {
         assert(escher.top().retreat.$el.is(':hidden'))
       })
 
+      it('removes the escher specific class names', function () {
+        escher.pop()
+        assert(!layer1.$el.hasClass('escher-step'))
+      })
+
       it('enables the events for the top view', function () {
         escher.pop()
         escher.top().view.$('.next').trigger('click')
@@ -76,6 +81,14 @@ describe('Escher', function () {
         escher.push(layer1)
         assert.equal(escher.length(), 2)
         assert.equal(escher.top().view, layer1)
+      })
+
+      it('sets the appropriate class names', function () {
+        escher.push(layer1)
+        assert(base.$el.hasClass('escher-step'))
+        assert(layer1.$el.hasClass('escher-step'))
+
+        assert(escher.bottom().retreat.$el.hasClass('escher-step-retreat'))
       })
 
       it('sets the correct style for the new page', function () {

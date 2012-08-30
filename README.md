@@ -90,6 +90,8 @@ Remove the top view
 mcescher.pop()
 ```
 
+Each retreat link is wrapped by a div with a classname of **escher-step-retreat**, so it can be styled.  Every view managed by escher will have a classname of **escher-step** applied.
+
 ### Configuration
 
 topOffset: 15

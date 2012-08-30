@@ -24,6 +24,7 @@
 
   Escher.prototype._step = function (view) {
     var step = new Step(view, this.opts)
+    view.$el.addClass('escher-step')
     step.index = this.steps.push(step) - 1
     step.retreat.on('close', function () {
       var self = this
@@ -88,6 +89,7 @@
 
   Step.prototype.destroy = function () {
     this.view.undelegateEvents()
+    this.view.$el.removeClass('escher-step')
     this.view.remove()
     this.retreat.off('close')
     this.retreat.remove()
