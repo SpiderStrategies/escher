@@ -38,10 +38,9 @@
 
 <h3>Download</h3>
 
-<ul>
-<li><a href="https://raw.github.com/SpiderStrategies/escher/master/src/escher.js">Development</a></li>
-<li><a href="">Production -- Not yet</a></li>
-</ul><h4>Non-AMD</h4>
+<p>Download the Dev or Prod (uglified) <a href="https://raw.github.com/SpiderStrategies/escher/master/dist/">vesions</a>.</p>
+
+<h4>Non-AMD</h4>
 
 <pre><code>  &lt;!-- Include jquery, backbone, underscore --&gt;
   &lt;script src="/assets/vendor/escher.js"&gt;&lt;/script&gt;
@@ -49,7 +48,21 @@
 
 <h4>Using with AMD</h4>
 
-<p>TODO: Build a shim into the file.</p>
+<p>Define the path for escher and then you can require it.  Escher adds itself to Backbone, so the define returns backbone.</p>
+
+<pre><code>main.js
+ {
+  paths:
+    { escher: '/vendor/backbone/plugins/escher'}
+ }
+</code></pre>
+
+<p>Then simply require it, so it loads itself into backbone</p>
+
+<pre><code>define('core', ['escher'], function (Backbone) {
+  // Escher is loaded into backbone
+})
+</code></pre>
 
 <h3>Usage</h3>
 
@@ -100,11 +113,32 @@ $('#container').append(hv.render().el)
 <pre><code>mcescher.pop()
 </code></pre>
 
+<p>Each retreat link is wrapped by a div with a classname of <strong>escher-step-retreat</strong>, so it can be styled.  Every view managed by escher will have a classname of <strong>escher-step</strong> applied.</p>
+
+<h4>Events</h4>
+
+<p>Backbone.View#view:activate -&gt; Fired when a view is on top of the stack.
+Backbone.View#view:deactivate -&gt; Fired when a view is popped or dropped back on the stack.
+Escher#changing -&gt; Fired before the stack changes.
+Escher#changed -&gt; Fired after the stack has changed state.</p>
+
 <h3>Configuration</h3>
 
 <p>topOffset: 15
 leftOffset: 5
 labelField: 'name'</p>
+
+<h4>Testing</h4>
+
+<p>Tests use mocha and chai.assert.  Install these dependencies.</p>
+
+<pre><code>npm install -d
+</code></pre>
+
+<p>Run the tests</p>
+
+<pre><code>make test
+</code></pre>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/SpiderStrategies">SpiderStrategies</a></p>
