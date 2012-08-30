@@ -93,6 +93,26 @@ describe('Escher', function () {
           chai.assert.equal(escher.bottom().view, base)
         })
 
+        it('stress test', function () {
+          for (var i = 0; i < 15; i++) {
+            var Layer = Backbone.View.extend({
+              attributes: {
+                style: "border: solid 1px #8b6125; background: #6D3353;"
+              },
+              name: 'Layer ' + i
+            })
+            escher.push(new Layer)
+          }
+          chai.assert.equal(escher.length(), 16)
+          chai.assert.equal(escher.top().retreat.$el.text(), 'Layer 14')
+          chai.assert.equal(escher.bottom().view, base)
+
+          chai.assert.equal(escher.top().view.$el.css('margin-left'), (base.$el.offset().left * 15)+ (15 * escher.opts.leftOffset) + 'px')
+          escher.steps[1].retreat.trigger('close')
+          chai.assert.equal(escher.length(), 2)
+          chai.assert.equal($("#container").children().size(), 2)
+        })
+
         it('builds a retreat link', function () {
           escher.push(layer1)
           // Verify the base view has a retreat link
