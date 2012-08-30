@@ -1,7 +1,7 @@
 var assert = chai.assert
 
 describe('Escher', function () {
-  var Escher, base;
+  var Escher, base
 
   describe('Initialization', function () {
     it('throws an error if a base view is not defined', function () {
@@ -225,6 +225,27 @@ describe('Escher', function () {
         }
       })
       layer1 = new Layer1
+    })
+  })
+
+  describe('Multiple instances of escher', function () {
+    it('minds its own business', function () {
+      var escher = new Escher({
+        base: base
+      })
+
+      var Base2 = Backbone.View.extend({})
+      var escher2 = new Escher({
+        base: new Base2
+      })
+      assert.notEqual(escher, escher2)
+      assert.equal(escher.length(), 1)
+      assert.equal(escher2.length(), 1)
+      assert.notEqual(escher.top(), escher2.top())
+
+      escher.push(new (Backbone.View.extend({})))
+      assert.equal(escher.length(), 2)
+      assert.equal(escher2.length(), 1)
     })
   })
 
