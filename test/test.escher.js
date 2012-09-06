@@ -19,28 +19,26 @@ describe('Escher', function () {
       })
 
       assert.equal(escher.opts.topOffset, 20)
-      assert.equal(escher.opts.leftOffset, 5)
+      assert.equal(escher.opts.leftOffset, 20)
       assert.equal(escher.opts.labelField, 'name')
     })
 
     it('adds the base step', function () {
       var escher = new Escher({ base: base })
 
-      assert.equal(escher.steps.length, 1)
-      assert.equal(escher.length(), 1)
+      assert.equal(escher.steps.length, 0)
+      assert.equal(escher.length(), 0)
+      assert(escher.base)
     })
   })
 
   describe('Top & Bottom', function () {
     it('fetches the top', function () {
       var escher = new Escher({ base: base })
-      assert.equal(escher.bottom().view, base)
-      assert.equal(escher.top(), escher.bottom())
       var v = new Backbone.View
       escher.push(v)
-      assert.equal(escher.top().view, v)
-      assert.notEqual(escher.top(), escher.bottom())
-      assert.equal(escher.bottom().view, base)
+      assert.equal(escher.bottom().view, v)
+      assert.equal(escher.top(), escher.bottom())
     })
   })
 
@@ -70,7 +68,7 @@ describe('Escher', function () {
 
     it('emits a changed event when the stack changes', function (done) {
       escher.on('changed', function () {
-        assert.equal(escher.length(), 2)
+        assert.equal(escher.length(), 1)
         done()
       })
       escher.push(layer)
@@ -78,7 +76,7 @@ describe('Escher', function () {
 
     it('emits a changing event before the stack changes', function (done) {
       escher.on('changing', function () {
-        assert.equal(escher.length(), 1)
+        assert.equal(escher.length(), 0)
         done()
       })
       escher.push(layer)
@@ -91,31 +89,71 @@ describe('Escher', function () {
     })
   })
 
+  describe('Window resize', function () {
+    var escher;
+
+    it('fires escher resize when the window is resized', function () {
+      var fired = false
+      escher._resize = function () {
+        fired = true
+      }
+      escher.push(new Backbone.View)
+      $(window).trigger('resize')
+      assert(fired)
+    })
+
+    it('does not fire resize when the window is resized because there are no stacked views', function () {
+      var fired = false
+      escher._resize = function () {
+        fired = true
+      }
+      $(window).trigger('resize')
+      assert(!fired)
+    })
+
+    it('does not fire resize after the stack has been fully popped', function () {
+      var fired = false
+      escher._resize = function () {
+        fired = true
+      }
+      escher.push(new Backbone.View)
+      $(window).trigger('resize')
+      fired = false
+      escher.pop()
+      $(window).trigger('resize')
+      assert(!fired)
+    })
+
+    beforeEach(function () {
+      escher = new Escher({base: base})
+
+    })
+  })
+
   describe('Push & Pop', function () {
     var escher, layer1;
 
     describe('pop', function () {
       it('removes the top layer from the stack', function () {
-        assert.equal(escher.length(), 2)
-        escher.pop()
         assert.equal(escher.length(), 1)
+        escher.pop()
+        assert.equal(escher.length(), 0)
       })
 
-      it('hides the retreat link for the top view', function () {
-        assert(!escher.top().view.$('.escher-step-retreat').size())
-        escher.pop()
-        assert(escher.top().retreat.$el.is(':hidden'))
+      it('shows the retreat link for the top view', function () {
+        assert(escher.top().$('.escher-step-retreat').size())
       })
 
       it('removes the escher specific class names', function () {
+        assert(escher.top().view.$el.hasClass('escher-step-view'))
         escher.pop()
-        assert(!layer1.$el.hasClass('escher-step'))
+        assert(!layer1.$el.hasClass('escher-step-view'))
       })
 
       it('enables the events for the top view', function () {
         escher.pop()
-        escher.top().view.$('.next').trigger('click')
-        assert(escher.top().view.clicked)
+        base.$('.next').trigger('click')
+        assert(base.clicked)
       })
 
       beforeEach(function () {
@@ -126,33 +164,31 @@ describe('Escher', function () {
     describe('push', function () {
       it('adds a new step on the stack', function () {
         escher.push(layer1)
-        assert.equal(escher.length(), 2)
+        assert.equal(escher.length(), 1)
         assert.equal(escher.top().view, layer1)
       })
 
       it('sets the appropriate class names', function () {
         escher.push(layer1)
-        assert(base.$el.hasClass('escher-step'))
-        assert(layer1.$el.hasClass('escher-step'))
-
-        assert(escher.bottom().retreat.$el.hasClass('escher-step-retreat'))
+        assert(layer1.$el.hasClass('escher-step-view'))
+        assert(escher.top().$el.hasClass('escher-step'))
+        assert(escher.top().view.$el.hasClass('escher-step-view'))
+        assert(escher.top().retreat.$el.hasClass('escher-step-retreat'))
       })
 
       it('sets the correct style for the new page', function () {
         escher.push(layer1)
-        // margin-top, margin-left, width, height
         var offset = base.$el.offset()
-        assert.equal(layer1.$el.css('margin-top'), offset.top + escher.opts.topOffset + 'px')
-        assert.equal(layer1.$el.css('margin-left'), offset.left + escher.opts.leftOffset + 'px')
-        assert.equal(layer1.$el.width(), base.$el.width() - escher.opts.leftOffset)
-        assert.equal(layer1.$el.height(), base.$el.height() - escher.opts.topOffset)
+        assert.equal(escher.top().$el.css('position'), 'absolute')
+
+        assert.equal(~~escher.top().$el.position().left, ~~offset.left)
+        assert.equal(Math.floor(escher.top().$el.position().top), Math.floor(offset.top))
+        assert.equal(escher.top().view.$el.css('margin-left'), escher.opts.leftOffset + 'px')
+        assert.equal(escher.top().view.$el.css('margin-bottom'), -(escher.opts.bottomOffset) + 'px')
+        assert.equal(escher.top().view.$el.css('width'), escher.top().$el.width() + 'px')
       })
 
       describe('background views', function () {
-        it('drops the base step back', function () {
-          escher.push(layer1)
-          assert.equal(escher.bottom().view, base)
-        })
 
         it('stress test', function () {
           for (var i = 0; i < 15; i++) {
@@ -164,20 +200,18 @@ describe('Escher', function () {
             })
             escher.push(new Layer)
           }
-          assert.equal(escher.length(), 16)
-          assert.equal(escher.top().retreat.$el.text(), 'Layer 14')
-          assert.equal(escher.bottom().view, base)
+          assert.equal(escher.length(), 15)
+          assert.equal(escher.bottom().retreat.$el.text(), 'Base')
+          assert.equal(escher.top().retreat.$el.text(), 'Layer 13')
 
-          assert.equal(escher.top().view.$el.css('margin-left'), (base.$el.offset().left * 15)+ (15 * escher.opts.leftOffset) + 'px')
-          escher.steps[1].retreat.trigger('close')
-          assert.equal(escher.length(), 2)
-          assert.equal($("#container").children().size(), 2)
+          escher.steps[0].retreat.trigger('close')
+          assert.equal(escher.length(), 0)
+          assert.equal($("#container").children().size(), 1)
         })
 
         it('builds a retreat link', function () {
           escher.push(layer1)
-          // Verify the base view has a retreat link
-          var $retreat = escher.bottom().view.$('.escher-step-retreat')
+          var $retreat = escher.bottom().$('.escher-step-retreat')
           assert.equal($retreat.size(), 1)
           assert.equal($retreat.text(), base.name)
         })
@@ -194,18 +228,18 @@ describe('Escher', function () {
         it('clears overlaid views if retreating to the base view', function () {
           escher.push(layer1)
           assert(escher.bottom().retreat.$el.is(':visible'))
-          assert.equal(escher.length(), 2)
+          assert.equal(escher.length(), 1)
           escher.bottom().retreat.trigger('close')
 
           // Make sure we only have one item (the base) in the stack
-          assert.equal(escher.length(), 1)
+          assert.equal(escher.length(), 0)
 
           //Make sure events are turned on
           base.$('.next').trigger('click')
           assert(base.clicked)
+          assert(!escher.length())
 
-          // The base should not display the retreat link
-          assert(escher.bottom().retreat.$el.is(':hidden'))
+          assert.equal($("#container").children().size(), 1)
         })
       })
     })
@@ -239,13 +273,13 @@ describe('Escher', function () {
         base: new Base2
       })
       assert.notEqual(escher, escher2)
-      assert.equal(escher.length(), 1)
-      assert.equal(escher2.length(), 1)
-      assert.notEqual(escher.top(), escher2.top())
+      assert.equal(escher.length(), 0)
+      assert.equal(escher2.length(), 0)
+      assert.notEqual(escher.base, escher2.base)
 
       escher.push(new (Backbone.View.extend({})))
-      assert.equal(escher.length(), 2)
-      assert.equal(escher2.length(), 1)
+      assert.equal(escher.length(), 1)
+      assert.equal(escher2.length(), 0)
     })
   })
 

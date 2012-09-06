@@ -13,30 +13,58 @@
     }
     // TODO: receive other useful config options
     _.defaults(opts, {
-      topOffset: 15,
-      leftOffset: 5,
+      topOffset: 60,
+      leftOffset: 20,
+      bottomOffset: 20,
       labelField: 'name'
     })
     this.opts = opts
+    this.base = opts.base
     this.steps = []
-    this._step(opts.base)
+
+    this.on('changed', this._resize)
+
+    var self = this
+    var _resize = function () {
+      self._resize()
+    }
+    this.on('changed', function () {
+      if (self.length()) {
+        $(window).resize(_resize)
+      } else {
+        $(window).unbind('resize', _resize)
+      }
+    })
   }
 
   Escher.prototype.on = Backbone.Events.on
   Escher.prototype.off = Backbone.Events.off
   Escher.prototype.trigger = Backbone.Events.trigger
 
-  Escher.prototype._step = function (view) {
-    var step = new Step(view, this.opts)
-    view.$el.addClass('escher-step')
-    view.trigger('view:activate')
-    step.index = this.steps.push(step) - 1
-    step.retreat.on('close', function () {
-      var self = this
-      _.each(_.rest(this.steps, _.indexOf(this.steps, step) + 1), function (i) {
-        self.pop()
-      })
-    }, this)
+  Escher.prototype._resize = function () {
+    if (this.length() === 0) {
+     this.base.$el.css('height', '')
+     return
+    }
+
+    var top = this.top()
+    top.view.$el.css('height', '')
+    top.$el.css('height', '')
+    var height = top.$el.outerHeight()
+
+    var offset = this.opts.bottomOffset * 2
+    _.each(_.first(this.steps, _.indexOf(this.steps, top)).reverse(), function (step, i) {
+      height += offset
+      step.view.$el.height(0)
+      step.$el.height(height)
+    })
+
+    if (this.length() === 1) {
+      this.top().$el.css('height', 'auto')
+      height -= this.opts.bottomOffset
+    }
+
+    this.base.$el.height(height)
   }
 
   Escher.prototype.top = function () {
@@ -49,31 +77,59 @@
 
   Escher.prototype.push = function (view, rendered) {
     this.trigger('changing')
-    // Drop the current step back
-    var last = _.last(this.steps).drop()
+    var last = _.last(this.steps)
+    var label = last && last.view[this.opts.labelField] || this.base[this.opts.labelField]
+    var container = last && last.$el || this.base.$el.parent()
 
-    var offset = last.view.$el.offset()
-    // Render this view
-    view.render().$el.css({
-      'margin-top': offset.top + this.opts.topOffset,
-      'margin-left': offset.left + this.opts.leftOffset,
-      'width': last.view.$el.width() - this.opts.leftOffset,
-      'height': last.view.$el.height() - this.opts.topOffset,
-      'position': 'absolute'
-    })
+    // This code is garbage.
+    var pos
+    if (last) {
+      pos = {
+        left: this.opts.leftOffset,
+        top: this.opts.topOffset,
+        width: last.$el.width()
+      }
+    } else {
+      this.base.$el.css('overflow', 'hidden')
+      pos = {
+        left: this.base.$el.offset().left,
+        top: this.base.$el.offset().top,
+        width: this.base.$el.outerWidth()
+      }
+    }
+    if (last) {
+      last.drop()
+    } else {
+      this.base.undelegateEvents()
+      this.base.trigger('view:deactivate')
+    }
 
-    // Place it appropriately
-    last.view.$el.after(view.el)
-    this._step(view)
+    var ss = new StackedStep({view: view, label: label, opts: this.opts, container: container, position: pos}).render()
+    ss.on('close', this._retreat, this)
+    this.steps.push(ss)
     this.trigger('changed')
+  }
+
+  Escher.prototype._retreat = function (step) {
+    var self = this
+    _.each(_.rest(self.steps, _.indexOf(self.steps, step)), function (i) {
+      self.pop()
+    })
   }
 
   Escher.prototype.pop = function () {
     this.trigger('changing')
-    if (this.steps.length > 1) {
-      this.steps.pop().destroy()
-      _.last(this.steps).rise()
+
+    this.steps.pop().destroy()
+    var top = _.last(this.steps)
+    if (top) {
+      top.rise()
+    } else {
+      this.base.delegateEvents()
+      this.base.trigger('view:activate')
+      this.base.$el.css('overflow', '')
     }
+
     this.trigger('changed')
   }
 
@@ -81,51 +137,78 @@
     return this.steps.length
   }
 
-  var Step = function (view, opts) {
-    this.view = view
-    this.opts = opts
-    this.retreat = new StepRetreat({step: this, label: view[opts.labelField]}).render()
-  }
+  var StackedStep = Backbone.View.extend({
+    className: 'escher-step',
 
-  Step.prototype.drop = function () {
-    // Disable our events
-    this.view.undelegateEvents()
-    // Add the retreat link
-    this.retreat.$el.show()
-    this.view.$el.append(this.retreat.$el)
-    this.view.trigger('view:deactivate')
-    return this
-  }
+    attributes: {
+      style: 'position: absolute'
+    },
 
-  Step.prototype.destroy = function () {
-    this.view.undelegateEvents()
-    this.view.$el.removeClass('escher-step')
-    this.view.remove()
-    this.view.trigger('view:deactivate')
-    this.retreat.off('close')
-    this.retreat.remove()
-    this.retreat = null
-  }
+    initialize: function (opts) {
+      this.view = opts.view
+      this.opts = opts.opts
+      this.retreat = new StepRetreat({label: opts.label}).render()
 
-  Step.prototype.rise = function () {
-    this.view.delegateEvents()
-    this.retreat.$el.hide()
-    this.view.trigger('view:activate')
-  }
+      this.position = opts.position
+      this.container = opts.container
+
+      // Yikes!
+      var self = this
+      this.retreat.on('close', function () {
+        self.trigger('close', self)
+      })
+    },
+
+    render: function () {
+      this.view.$el.addClass('escher-step-view')
+      this.view.trigger('view:activate')
+
+      this.$el.css(this.position)
+
+      this.view.$el.css({
+        'margin-left': this.opts.leftOffset,
+        'margin-bottom': -1 * this.opts.bottomOffset,
+        'width': '100%'
+      })
+
+      this.$el.append(this.retreat.el)
+      this.$el.append(this.view.render().el)
+      this.container.append(this.$el)
+
+      return this
+    },
+
+    drop: function () {
+      this.view.undelegateEvents()
+      this.view.trigger('view:deactivate')
+      return this
+    },
+
+    destroy: function () {
+      this.view.undelegateEvents()
+      this.view.$el.removeClass('escher-step-view')
+      this.view.$el.parent().remove()
+      this.view.remove()
+      this.view.trigger('view:deactivate')
+      this.retreat.off('close')
+      this.retreat.remove()
+      this.retreat = null
+    },
+
+    rise: function () {
+      this.view.delegateEvents()
+      this.view.trigger('view:activate')
+    }
+  })
 
   var StepRetreat = Backbone.View.extend({
     className: "escher-step-retreat",
-
-    attributes: {
-      style: 'position: absolute; top: 0; left: 0;'
-    },
 
     events: {
       'click a': 'close'
     },
 
     initialize: function (opts) {
-      this.step = opts.step
       this.label = opts.label
     },
 
@@ -134,7 +217,7 @@
     },
 
     render: function () {
-      this.$el.html('<a href="#">' + this.label + '</a>')
+      this.$el.html('<header><a href="#">' + this.label + '</a></header>')
       return this
     }
   })

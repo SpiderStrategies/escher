@@ -10,7 +10,7 @@
     <script src="../node_modules/chai/chai.js"></script>
     <script src="../src/escher.js"></script>
     <script>
-      mocha.setup('bdd')
+      mocha.setup({ui: 'bdd', globals: ['jQuery*']})
     </script>
     <script src="test.escher.js"></script>
     <script>
