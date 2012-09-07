@@ -142,32 +142,8 @@
             }
           })
 
-        window.Layer3 = Backbone.View.extend({
-            attributes: {
-              style: "border: solid 1px #8b6125; background-color: white; "
-            },
-
-            events: {
-              'click .close': 'close'
-            },
-
-            name: 'Purple layer',
-
-            close: function (e) {
-              escher.pop()
-            },
-
-            render: function () {
-              this.$el.html('<div>' +
-                            '  <p style="padding-left: 30px; padding-top: 60px;">Layer 3</p>' +
-                            '  <button class="close">Close</button>' +
-                            '</div>')
-              return this
-            }
-          })
-
           var base = new Base
-          window.escher = new Backbone.Escher({
+          var escher = new Backbone.Escher({
             base: base
           })
           $("#container").append(base.render().el)
