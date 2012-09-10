@@ -142,13 +142,11 @@
     },
 
     destroy: function () {
-      this.view.undelegateEvents()
-      this.view.$el.removeClass('escher-step-view')
-      this.view.$el.parent().remove()
-      this.view.remove()
       this.view.trigger('view:deactivate')
       this.retreat.off('close')
       this.retreat.remove()
+      this.remove()
+      this.view = null
       this.retreat = null
     }
 

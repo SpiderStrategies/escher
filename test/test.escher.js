@@ -104,9 +104,9 @@ describe('Escher', function () {
       })
 
       it('removes the escher specific class names', function () {
-        assert(escher.top().view.$el.hasClass('escher-step-view'))
+        assert(base.$el.hasClass('escher-step-view-covered'))
         escher.pop()
-        assert(!layer1.$el.hasClass('escher-step-view'))
+        assert(!base.$el.hasClass('escher-step-view-covered'))
       })
 
       it('enables the events for the top view', function () {
