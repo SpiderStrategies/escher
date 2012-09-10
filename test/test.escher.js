@@ -1,7 +1,7 @@
 var assert = chai.assert
 
 describe('Escher', function () {
-  var Escher, base
+  var Escher, base, layer1
 
   describe('Initialization', function () {
     it('throws an error if a base view is not defined', function () {
@@ -90,7 +90,7 @@ describe('Escher', function () {
   })
 
   describe('Push & Pop', function () {
-    var escher, layer1;
+    var escher;
 
     describe('pop', function () {
       it('removes the top layer from the stack', function () {
@@ -219,19 +219,6 @@ describe('Escher', function () {
 
     beforeEach(function () {
       escher = new Escher({ base: base })
-      var Layer1 = Backbone.View.extend({
-        name: 'Pink Layer',
-
-        render: function () {
-          this.$el.html('<div>' +
-                        '  <p style="padding-left: 30px; padding-top: 60px;">Layer 2</p>' +
-                        '  <button class="next">Next</button>' +
-                        '  <button class="close">Close</button>' +
-                        '</div>')
-          return this
-        }
-      })
-      layer1 = new Layer1
     })
   })
 
@@ -282,6 +269,19 @@ describe('Escher', function () {
         return this
       }
     })
+
+    layer1 = new (Backbone.View.extend({
+        name: 'Pink Layer',
+
+        render: function () {
+          this.$el.html('<div>' +
+                        '  <p style="padding-left: 30px; padding-top: 60px;">Layer 2</p>' +
+                        '  <button class="next">Next</button>' +
+                        '  <button class="close">Close</button>' +
+                        '</div>')
+          return this
+        }
+      }))
 
     base = new Base
     $('#container').append(base.render().el)
