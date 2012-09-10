@@ -18,8 +18,7 @@
       labelField: 'name'
     })
     this.opts = opts
-    this.base = opts.base
-    this.steps = []
+    this.steps = [new StackedStep({view: opts.base, label: this.name, opts: this.opts})]
 
     this.on('changed', this._resize)
   }
@@ -29,45 +28,25 @@
   Escher.prototype.trigger = Backbone.Events.trigger
 
   Escher.prototype._resize = function () {
-    // if the stack is empty, we don't have to do anything
-    if (this.length() === 0) {
-      this.base.$el.css('height', '')
-      this.base.$el.removeClass('escher-step-view-covered')
+    if (this.length() === 1) {
+      // Early exit
       return
     }
 
-    // apply CSS overrides to the covered view
-    this.base.$el.addClass('escher-step-view-covered')
-
-    // set the height of the top element on the stack to auto to match its content
     var top = this.top()
-    top.view.$el.css('height', '')
-    top.view.$el.removeClass('escher-step-view-covered')
-    top.$el.css('height', '')
-
-    // base all of the underlying elements' height off of the top element
     var height = top.$el.outerHeight()
     var bottomOffset = this.opts.bottomOffset
 
-    // loop through all of the underlying elements, setting the correct heights.
-    _.each(_.first(this.steps, _.indexOf(this.steps, top)).reverse(), function (step, i) {
+    // set heights for underlying elements
+    _.each(_.first(this.steps, _.indexOf(this.steps, top)).reverse(), function (step) {
       // set the height of view that's being covered
       step.view.$el.height(height)
-
       // set the height for the cover
-      var sizeDifference = step.retreat.$el.outerHeight(true) - bottomOffset
-      height += sizeDifference
+      height += step.retreat.$el.outerHeight(true) - bottomOffset
       step.$el.height(height)
-
-      // apply CSS overrides to the covered view
-      step.view.$el.addClass('escher-step-view-covered')
     })
 
-    if (this.length() === 1) {
-      this.top().$el.css('height', 'auto')
-    }
-
-    this.base.$el.height(height)
+    this.bottom().$el.height(height)
   }
 
   Escher.prototype.top = function () {
@@ -80,18 +59,11 @@
 
   Escher.prototype.push = function (view, rendered) {
     this.trigger('changing')
-    var last = _.last(this.steps)
-    var label = last && last.view[this.opts.labelField] || this.base[this.opts.labelField]
-    var parent = last && last.view.$el || this.base.$el
-
-    if (last) {
-      last.drop()
-    } else {
-      this.base.undelegateEvents()
-      this.base.trigger('view:deactivate')
-    }
-
+    var last = _.last(this.steps).drop()
+    var label = last.view[this.opts.labelField]
+    var parent = last.view.$el
     var ss = new StackedStep({view: view, label: label, opts: this.opts, parent: parent}).render()
+
     ss.on('close', this._retreat, this)
     this.steps.push(ss)
     this.trigger('changed')
@@ -105,18 +77,12 @@
   }
 
   Escher.prototype.pop = function () {
-    this.trigger('changing')
-
-    this.steps.pop().destroy()
-    var top = _.last(this.steps)
-    if (top) {
-      top.rise()
-    } else {
-      this.base.delegateEvents()
-      this.base.trigger('view:activate')
+    if (this.length() > 1) {
+      this.trigger('changing')
+      this.steps.pop().destroy()
+      _.last(this.steps).rise()
+      this.trigger('changed')
     }
-
-    this.trigger('changed')
   }
 
   Escher.prototype.length = function () {
@@ -163,7 +129,16 @@
     drop: function () {
       this.view.undelegateEvents()
       this.view.trigger('view:deactivate')
+      this.view.$el.addClass('escher-step-view-covered')
       return this
+    },
+
+    rise: function () {
+      this.view.$el.css('height', '')
+      this.$el.css('height', '')
+      this.view.delegateEvents()
+      this.view.trigger('view:activate')
+      this.view.$el.removeClass('escher-step-view-covered')
     },
 
     destroy: function () {
@@ -175,12 +150,8 @@
       this.retreat.off('close')
       this.retreat.remove()
       this.retreat = null
-    },
-
-    rise: function () {
-      this.view.delegateEvents()
-      this.view.trigger('view:activate')
     }
+
   })
 
   var StepRetreat = Backbone.View.extend({

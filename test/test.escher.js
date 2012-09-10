@@ -26,9 +26,9 @@ describe('Escher', function () {
     it('adds the base step', function () {
       var escher = new Escher({ base: base })
 
-      assert.equal(escher.steps.length, 0)
-      assert.equal(escher.length(), 0)
-      assert(escher.base)
+      assert.equal(escher.steps.length, 1)
+      assert.equal(escher.length(), 1)
+      assert.equal(escher.top(), escher.bottom())
     })
   })
 
@@ -37,8 +37,8 @@ describe('Escher', function () {
       var escher = new Escher({ base: base })
       var v = new Backbone.View
       escher.push(v)
-      assert.equal(escher.bottom().view, v)
-      assert.equal(escher.top(), escher.bottom())
+      assert.equal(escher.bottom().view, base)
+      assert.equal(escher.top().view, v)
     })
   })
 
@@ -68,7 +68,7 @@ describe('Escher', function () {
 
     it('emits a changed event when the stack changes', function (done) {
       escher.on('changed', function () {
-        assert.equal(escher.length(), 1)
+        assert.equal(escher.length(), 2)
         done()
       })
       escher.push(layer)
@@ -76,7 +76,7 @@ describe('Escher', function () {
 
     it('emits a changing event before the stack changes', function (done) {
       escher.on('changing', function () {
-        assert.equal(escher.length(), 0)
+        assert.equal(escher.length(), 1)
         done()
       })
       escher.push(layer)
@@ -94,9 +94,9 @@ describe('Escher', function () {
 
     describe('pop', function () {
       it('removes the top layer from the stack', function () {
-        assert.equal(escher.length(), 1)
+        assert.equal(escher.length(), 2)
         escher.pop()
-        assert.equal(escher.length(), 0)
+        assert.equal(escher.length(), 1)
       })
 
       it('shows the retreat link for the top view', function () {
@@ -123,7 +123,7 @@ describe('Escher', function () {
     describe('push', function () {
       it('adds a new step on the stack', function () {
         escher.push(layer1)
-        assert.equal(escher.length(), 1)
+        assert.equal(escher.length(), 2)
         assert.equal(escher.top().view, layer1)
       })
 
@@ -137,14 +137,28 @@ describe('Escher', function () {
 
       it('sets the correct style for the new page', function () {
         escher.push(layer1)
-        var offset = base.$el.offset()
         assert.equal(escher.top().$el.css('position'), 'absolute')
-
-        assert.equal(~~escher.top().$el.position().left, ~~offset.left)
-        assert.equal(Math.floor(escher.top().$el.position().top), Math.floor(offset.top))
+        assert.equal(escher.top().$el.css('left'), '0px');
+        assert.equal(escher.top().$el.css('top'), '0px');
         assert.equal(escher.top().view.$el.css('margin-left'), escher.opts.leftOffset + 'px')
         assert.equal(escher.top().view.$el.css('margin-bottom'), -(escher.opts.bottomOffset) + 'px')
-        assert.equal(escher.top().view.$el.css('width'), escher.top().$el.width() + 'px')
+        assert.equal(escher.top().$el.css('height'), base.$el.css('height'))
+        escher.push(new (Backbone.View.extend({
+            attributes: {
+              style: "height: 500px"
+            },
+
+            name: 'Purple layer',
+
+            render: function () {
+              this.$el.html('<div>' +
+                            '  <p style="padding-left: 30px; padding-top: 60px;">Layer 3</p>' +
+                            '  <button class="close">Close</button>' +
+                            '</div>')
+              return this
+            }
+          })))
+
       })
 
       describe('background views', function () {
@@ -159,18 +173,18 @@ describe('Escher', function () {
             })
             escher.push(new Layer)
           }
-          assert.equal(escher.length(), 15)
-          assert.equal(escher.bottom().retreat.$el.text(), 'Base')
+          assert.equal(escher.length(), 16)
+          assert.equal(escher.steps[1].retreat.$el.text(), 'Base')
           assert.equal(escher.top().retreat.$el.text(), 'Layer 13')
 
-          escher.steps[0].retreat.trigger('close')
-          assert.equal(escher.length(), 0)
+          escher.steps[1].retreat.trigger('close')
+          assert.equal(escher.length(), 1)
           assert.equal($("#container").children().size(), 1)
         })
 
         it('builds a retreat link', function () {
           escher.push(layer1)
-          var $retreat = escher.bottom().$('.escher-step-retreat')
+          var $retreat = escher.top().$('.escher-step-retreat')
           assert.equal($retreat.size(), 1)
           assert.equal($retreat.text(), base.name)
         })
@@ -186,17 +200,17 @@ describe('Escher', function () {
 
         it('clears overlaid views if retreating to the base view', function () {
           escher.push(layer1)
-          assert(escher.bottom().retreat.$el.is(':visible'))
-          assert.equal(escher.length(), 1)
-          escher.bottom().retreat.trigger('close')
+          assert(escher.top().retreat.$el.is(':visible'))
+          assert.equal(escher.length(), 2)
+          escher.top().retreat.trigger('close')
 
           // Make sure we only have one item (the base) in the stack
-          assert.equal(escher.length(), 0)
+          assert.equal(escher.length(), 1)
 
           //Make sure events are turned on
           base.$('.next').trigger('click')
           assert(base.clicked)
-          assert(!escher.length())
+          assert.equal(escher.length(), 1)
 
           assert.equal($("#container").children().size(), 1)
         })
@@ -232,13 +246,13 @@ describe('Escher', function () {
         base: new Base2
       })
       assert.notEqual(escher, escher2)
-      assert.equal(escher.length(), 0)
-      assert.equal(escher2.length(), 0)
-      assert.notEqual(escher.base, escher2.base)
+      assert.equal(escher.length(), 1)
+      assert.equal(escher2.length(), 1)
+      assert.notEqual(escher.bottom(), escher2.bottom())
 
       escher.push(new (Backbone.View.extend({})))
-      assert.equal(escher.length(), 1)
-      assert.equal(escher2.length(), 0)
+      assert.equal(escher.length(), 2)
+      assert.equal(escher2.length(), 1)
     })
   })
 
