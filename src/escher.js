@@ -100,16 +100,16 @@
     var pos
     if (last) {
       pos = {
-        left: this.opts.leftOffset,
-        top: this.opts.topOffset,
-        width: last.$el.width()
+        left: 0,
+        top: 0,
+        width: '100%'
       }
     } else {
-      this.base.$el.css('overflow', 'hidden')
+      //this.base.$el.css('overflow', 'hidden')
       pos = {
-        left: this.base.$el.offset().left,
-        top: this.base.$el.offset().top,
-        width: this.base.$el.outerWidth()
+        left: 0,
+        top: 0,
+        width: '100%'
       }
     }
     if (last) {
