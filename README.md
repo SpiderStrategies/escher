@@ -38,6 +38,8 @@ define('core', ['escher'], function (Backbone) {
 
 ### Usage
 
+Include the escher css file.
+
 Create a backbone view that will server as the base layer in the stack.
 
 ```

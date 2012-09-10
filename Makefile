@@ -8,6 +8,7 @@ clean:
 
 build: clean
 	@mkdir dist
+	@cp src/escher.css dist/escher-$(VERSION).css
 	@echo $(HEADER) > $(DIST) && cat src/escher.js >> $(DIST)
 	@echo $(HEADER) > $(MIN) && node_modules/.bin/uglifyjs src/escher.js >> $(MIN)
 
