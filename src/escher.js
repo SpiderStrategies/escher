@@ -13,7 +13,6 @@
     }
     // TODO: receive other useful config options
     _.defaults(opts, {
-      topOffset: 60,
       leftOffset: 20,
       bottomOffset: 20,
       labelField: 'name'
@@ -30,11 +29,11 @@
   Escher.prototype.trigger = Backbone.Events.trigger
 
   Escher.prototype._resize = function () {
-	// if the stack is empty, we don't have to do anything
+    // if the stack is empty, we don't have to do anything
     if (this.length() === 0) {
-     this.base.$el.css('height', '')
-     this.base.$el.removeClass('escher-step-view-covered')
-     return
+      this.base.$el.css('height', '')
+      this.base.$el.removeClass('escher-step-view-covered')
+      return
     }
 
     // apply CSS overrides to the covered view
@@ -48,7 +47,7 @@
 
     // base all of the underlying elements' height off of the top element
     var height = top.$el.outerHeight()
-    var sizeDifference = this.opts.topOffset - this.opts.bottomOffset
+    var bottomOffset = this.opts.bottomOffset
 
     // loop through all of the underlying elements, setting the correct heights.
     _.each(_.first(this.steps, _.indexOf(this.steps, top)).reverse(), function (step, i) {
@@ -56,6 +55,7 @@
       step.view.$el.height(height)
 
       // set the height for the cover
+      var sizeDifference = step.retreat.$el.outerHeight(true) - bottomOffset
       height += sizeDifference
       step.$el.height(height)
 
