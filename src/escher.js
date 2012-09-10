@@ -82,14 +82,8 @@
     this.trigger('changing')
     var last = _.last(this.steps)
     var label = last && last.view[this.opts.labelField] || this.base[this.opts.labelField]
-    var container = last && last.view.$el || this.base.$el
+    var parent = last && last.view.$el || this.base.$el
 
-    // This code is garbage.
-    var pos = {
-      left: 0,
-      top: 0,
-      width: '100%'
-    }
     if (last) {
       last.drop()
     } else {
@@ -97,7 +91,7 @@
       this.base.trigger('view:deactivate')
     }
 
-    var ss = new StackedStep({view: view, label: label, opts: this.opts, container: container, position: pos}).render()
+    var ss = new StackedStep({view: view, label: label, opts: this.opts, parent: parent}).render()
     ss.on('close', this._retreat, this)
     this.steps.push(ss)
     this.trigger('changed')
@@ -133,16 +127,14 @@
     className: 'escher-step',
 
     attributes: {
-      style: 'position: absolute'
+      style: 'position: absolute; left: 0; top: 0; width: 100%'
     },
 
     initialize: function (opts) {
       this.view = opts.view
       this.opts = opts.opts
+      this.parent = opts.parent
       this.retreat = new StepRetreat({label: opts.label}).render()
-
-      this.position = opts.position
-      this.container = opts.container
 
       // Yikes!
       var self = this
@@ -155,8 +147,6 @@
       this.view.$el.addClass('escher-step-view')
       this.view.trigger('view:activate')
 
-      this.$el.css(this.position)
-
       this.view.$el.css({
         'margin-left': this.opts.leftOffset,
         'margin-bottom': -1 * this.opts.bottomOffset,
@@ -165,7 +155,7 @@
 
       this.$el.append(this.retreat.el)
       this.$el.append(this.view.render().el)
-      this.container.append(this.$el)
+      this.parent.append(this.$el)
 
       return this
     },
