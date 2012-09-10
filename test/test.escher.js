@@ -89,47 +89,6 @@ describe('Escher', function () {
     })
   })
 
-  describe('Window resize', function () {
-    var escher;
-
-    it('fires escher resize when the window is resized', function () {
-      var fired = false
-      escher._resize = function () {
-        fired = true
-      }
-      escher.push(new Backbone.View)
-      $(window).trigger('resize')
-      assert(fired)
-    })
-
-    it('does not fire resize when the window is resized because there are no stacked views', function () {
-      var fired = false
-      escher._resize = function () {
-        fired = true
-      }
-      $(window).trigger('resize')
-      assert(!fired)
-    })
-
-    it('does not fire resize after the stack has been fully popped', function () {
-      var fired = false
-      escher._resize = function () {
-        fired = true
-      }
-      escher.push(new Backbone.View)
-      $(window).trigger('resize')
-      fired = false
-      escher.pop()
-      $(window).trigger('resize')
-      assert(!fired)
-    })
-
-    beforeEach(function () {
-      escher = new Escher({base: base})
-
-    })
-  })
-
   describe('Push & Pop', function () {
     var escher, layer1;
 

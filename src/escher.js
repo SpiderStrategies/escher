@@ -23,18 +23,6 @@
     this.steps = []
 
     this.on('changed', this._resize)
-
-    var self = this
-    var _resize = function () {
-      self._resize()
-    }
-    this.on('changed', function () {
-      if (self.length()) {
-        $(window).resize(_resize)
-      } else {
-        $(window).unbind('resize', _resize)
-      }
-    })
   }
 
   Escher.prototype.on = Backbone.Events.on
