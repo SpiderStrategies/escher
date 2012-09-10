@@ -94,7 +94,7 @@
     this.trigger('changing')
     var last = _.last(this.steps)
     var label = last && last.view[this.opts.labelField] || this.base[this.opts.labelField]
-    var container = last && last.view.$el || this.base.$el.parent()
+    var container = last && last.view.$el || this.base.$el
 
     // This code is garbage.
     var pos
