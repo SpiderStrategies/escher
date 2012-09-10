@@ -52,13 +52,13 @@
     // apply CSS overrides to the covered view
     this.base.$el.addClass('escher-step-view-covered')
 
-	// set the height of the top element on the stack to auto to match its content
+    // set the height of the top element on the stack to auto to match its content
     var top = this.top()
     top.view.$el.css('height', '')
     top.view.$el.removeClass('escher-step-view-covered')
     top.$el.css('height', '')
 
-	// base all of the underlying elements' height off of the top element
+    // base all of the underlying elements' height off of the top element
     var height = top.$el.outerHeight()
     var sizeDifference = this.opts.topOffset - this.opts.bottomOffset
 
@@ -97,20 +97,10 @@
     var container = last && last.view.$el || this.base.$el
 
     // This code is garbage.
-    var pos
-    if (last) {
-      pos = {
-        left: 0,
-        top: 0,
-        width: '100%'
-      }
-    } else {
-      //this.base.$el.css('overflow', 'hidden')
-      pos = {
-        left: 0,
-        top: 0,
-        width: '100%'
-      }
+    var pos = {
+      left: 0,
+      top: 0,
+      width: '100%'
     }
     if (last) {
       last.drop()
@@ -142,7 +132,6 @@
     } else {
       this.base.delegateEvents()
       this.base.trigger('view:activate')
-      this.base.$el.css('overflow', '')
     }
 
     this.trigger('changed')

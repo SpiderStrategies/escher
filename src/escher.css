@@ -1,16 +1,19 @@
 .escher-step {
+  visibility: visible;
   -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
-  -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;
 }
 
 .escher-step-view {
-  -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;
   -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.3); -moz-box-shadow: 0 0 6px rgba(0,0,0,0.3); box-shadow: 0 0 6px rgba(0,0,0,0.3);
   -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
+  -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;
 }
 
 .escher-step-view-covered {
+  position: relative;
+  visibility: hidden;
   -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;
+  -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;
 }
 
 .escher-step-retreat {
