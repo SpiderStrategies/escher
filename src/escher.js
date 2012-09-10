@@ -42,26 +42,41 @@
   Escher.prototype.trigger = Backbone.Events.trigger
 
   Escher.prototype._resize = function () {
+	// if the stack is empty, we don't have to do anything
     if (this.length() === 0) {
      this.base.$el.css('height', '')
+     this.base.$el.removeClass('escher-step-view-covered')
      return
     }
 
+    // apply CSS overrides to the covered view
+    this.base.$el.addClass('escher-step-view-covered')
+
+	// set the height of the top element on the stack to auto to match its content
     var top = this.top()
     top.view.$el.css('height', '')
+    top.view.$el.removeClass('escher-step-view-covered')
     top.$el.css('height', '')
-    var height = top.$el.outerHeight()
 
-    var offset = this.opts.bottomOffset * 2
+	// base all of the underlying elements' height off of the top element
+    var height = top.$el.outerHeight()
+    var sizeDifference = this.opts.topOffset - this.opts.bottomOffset
+
+    // loop through all of the underlying elements, setting the correct heights.
     _.each(_.first(this.steps, _.indexOf(this.steps, top)).reverse(), function (step, i) {
-      height += offset
-      step.view.$el.height(0)
+      // set the height of view that's being covered
+      step.view.$el.height(height)
+
+      // set the height for the cover
+      height += sizeDifference
       step.$el.height(height)
+
+      // apply CSS overrides to the covered view
+      step.view.$el.addClass('escher-step-view-covered')
     })
 
     if (this.length() === 1) {
       this.top().$el.css('height', 'auto')
-      height -= this.opts.bottomOffset
     }
 
     this.base.$el.height(height)
