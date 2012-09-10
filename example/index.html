@@ -127,6 +127,7 @@
             name: 'Purple layer',
 
             close: function (e) {
+              e.stopPropagation()
               escher.pop()
             },
 
