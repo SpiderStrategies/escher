@@ -64,6 +64,10 @@
     var parent = last.view.$el
     var ss = new StackedStep({view: view, label: label, opts: this.opts, parent: parent}).render()
 
+    ss.view.on('escher:resize', function () {
+      this._resize()
+    }, this)
+
     ss.on('close', this._retreat, this)
     this.steps.push(ss)
     this.trigger('changed')

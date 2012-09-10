@@ -228,16 +228,18 @@ describe('Escher', function () {
         base: base
       })
       escher.push(layer1)
-      escher.push(new (Backbone.View.extend({
+      var layer2 = new (Backbone.View.extend({
         attributes: { style: "height: 250px" }
-      })))
+      }))
+      escher.push(layer2)
 
       var top = escher.top()
       var height = top.$el.outerHeight() + top.retreat.$el.outerHeight(true) - escher.opts.bottomOffset
       assert.equal(height, base.$el.height())
 
       // Change the top view height
-      top.view.$el.height(500)
+      layer2.$el.height(500)
+      layer2.trigger('escher:resize')
       height = top.$el.outerHeight() + top.retreat.$el.outerHeight(true) - escher.opts.bottomOffset
       assert.equal(height, base.$el.height())
     })
