@@ -222,6 +222,27 @@ describe('Escher', function () {
     })
   })
 
+  describe('Resize top view', function () {
+    it('resizes the stack if the top view grows', function () {
+      var escher = new Escher({
+        base: base
+      })
+      escher.push(layer1)
+      escher.push(new (Backbone.View.extend({
+        attributes: { style: "height: 250px" }
+      })))
+
+      var top = escher.top()
+      var height = top.$el.outerHeight() + top.retreat.$el.outerHeight(true) - escher.opts.bottomOffset
+      assert.equal(height, base.$el.height())
+
+      // Change the top view height
+      top.view.$el.height(500)
+      height = top.$el.outerHeight() + top.retreat.$el.outerHeight(true) - escher.opts.bottomOffset
+      assert.equal(height, base.$el.height())
+    })
+  })
+
   describe('Multiple instances of escher', function () {
     it('minds its own business', function () {
       var escher = new Escher({
