@@ -1,5 +1,5 @@
 /*!
- * escher.js v0.0.5 
+ * escher.js v0.0.6 
  * Copyright 2012, Spider Strategies <nathan.bowser@spiderstrategies.com> 
  * escher.js may be freely distributed under the BSD license. 
 */
@@ -68,6 +68,10 @@
     var label = last.view[this.opts.labelField]
     var parent = last.view.$el
     var ss = new StackedStep({view: view, label: label, opts: this.opts, parent: parent}).render()
+
+    ss.view.on('resize', function () {
+      this._resize()
+    }, this)
 
     ss.on('close', this._retreat, this)
     this.steps.push(ss)
@@ -149,6 +153,7 @@
     destroy: function () {
       this.view.trigger('view:deactivate')
       this.retreat.off('close')
+      this.view.off('resize')
       this.retreat.remove()
       this.remove()
       this.view = null
