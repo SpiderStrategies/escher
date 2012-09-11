@@ -64,7 +64,7 @@
     var parent = last.view.$el
     var ss = new StackedStep({view: view, label: label, opts: this.opts, parent: parent}).render()
 
-    ss.view.on('escher:resize', function () {
+    ss.view.on('resize', function () {
       this._resize()
     }, this)
 
@@ -148,6 +148,7 @@
     destroy: function () {
       this.view.trigger('view:deactivate')
       this.retreat.off('close')
+      this.view.off('resize')
       this.retreat.remove()
       this.remove()
       this.view = null

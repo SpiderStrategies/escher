@@ -223,25 +223,41 @@ describe('Escher', function () {
   })
 
   describe('Resize top view', function () {
-    it('resizes the stack if the top view grows', function () {
-      var escher = new Escher({
-        base: base
-      })
-      escher.push(layer1)
-      var layer2 = new (Backbone.View.extend({
-        attributes: { style: "height: 250px" }
-      }))
-      escher.push(layer2)
+    var escher, layer2
 
+    it('resizes the stack if the top view grows', function () {
       var top = escher.top()
       var height = top.$el.outerHeight() + top.retreat.$el.outerHeight(true) - escher.opts.bottomOffset
       assert.equal(height, base.$el.height())
 
       // Change the top view height
       layer2.$el.height(500)
-      layer2.trigger('escher:resize')
+      layer2.trigger('resize')
       height = top.$el.outerHeight() + top.retreat.$el.outerHeight(true) - escher.opts.bottomOffset
       assert.equal(height, base.$el.height())
+    })
+
+    it('unbinds from the view resize if the view is no longer stacked', function () {
+      escher.pop()
+      escher.pop()
+      assert(escher.length(), 1)
+      var fired = false
+      escher._resize = function () {
+        fired = true
+      }
+      layer2.trigger('resize')
+      assert(!fired)
+    })
+
+    beforeEach(function () {
+      escher = new Escher({
+        base: base
+      })
+      escher.push(layer1)
+      layer2 = new (Backbone.View.extend({
+        attributes: { style: "height: 250px" }
+      }))
+      escher.push(layer2)
     })
   })
 
