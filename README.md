@@ -100,6 +100,12 @@ Backbone.View#view:deactivate -> Fired when a view is popped or dropped back on 
 Escher#changing -> Fired before the stack changes.
 Escher#changed -> Fired after the stack has changed state.
 
+If your top view changes in height, you'll need to trigger a resize event on the view, so escher can be resized.
+
+```
+view.trigger('resize')
+```
+
 ### Configuration
 
 topOffset: 15
