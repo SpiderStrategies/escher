@@ -108,9 +108,13 @@ view.trigger('resize')
 
 ### Configuration
 
-topOffset: 15
-leftOffset: 5
-labelField: 'name'
+* topOffset: 15
+* leftOffset: 5
+* labelField: 'name'
+* linkPop: true 
+  * true: view is popped by clicking on the header link (default)
+  * false: view is popped by clicking anywhere on the header
+
 
 #### Testing
 

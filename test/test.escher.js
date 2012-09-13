@@ -214,6 +214,30 @@ describe('Escher', function () {
 
           assert.equal($("#container").children().size(), 1)
         })
+
+        it('pops only when link is clicked if linkPop: true', function() {
+            escher.opts.linkPop = true
+            escher.push(layer1)
+            var $retreat = escher.top().$('.escher-step-retreat')
+
+            //Click on the main header div, nothing should happen
+            $retreat.trigger('click');
+            assert.equal(escher.length(), 2)
+
+            //Click on the link in the div, now it should pop
+            $retreat.find('a').trigger('click')
+            assert.equal(escher.length(), 1)
+        })
+
+        it('pops when clicking anywhere in retreat header if linkPop: false', function() {
+            escher.opts.linkPop = false
+            escher.push(layer1)
+            var $retreat = escher.top().$('.escher-step-retreat')
+
+            //Click on the main header div, it should pop
+            $retreat.trigger('click');
+            assert.equal(escher.length(), 1)
+        })
       })
     })
 
