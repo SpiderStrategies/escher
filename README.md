@@ -63,7 +63,7 @@ $('#container').append(hv.render().el)
 Create escher, passing it configuration settings.  At a bare minimum, pass it the base view.
 
 ```
-var mcescher = Backbone.Escher({ base: hv })
+var mcescher = new Backbone.Escher({ base: hv })
 ```
 
 Build a new view for the next layer.
