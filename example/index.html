@@ -142,7 +142,8 @@
 
           var base = new Base
           var escher = new Backbone.Escher({
-            base: base
+            base: base,
+            linkPop: false
           })
           $("#container").append(base.render().el)
         });

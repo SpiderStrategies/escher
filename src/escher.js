@@ -167,7 +167,7 @@
       this.label = opts.label
 
       this.events['click' + (opts.linkPop ? ' a' : '')] = 'close'
-    }, 
+    },
 
     close: function (e) {
       this.trigger('close')

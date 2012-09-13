@@ -21,6 +21,7 @@ describe('Escher', function () {
       assert.equal(escher.opts.topOffset, 20)
       assert.equal(escher.opts.leftOffset, 20)
       assert.equal(escher.opts.labelField, 'name')
+      assert.equal(escher.opts.linkPop, true)
     })
 
     it('adds the base step', function () {
@@ -215,8 +216,7 @@ describe('Escher', function () {
           assert.equal($("#container").children().size(), 1)
         })
 
-        it('pops only when link is clicked if linkPop: true', function() {
-            escher.opts.linkPop = true
+        it('pops only on a link click by default', function() {
             escher.push(layer1)
             var $retreat = escher.top().$('.escher-step-retreat')
 
@@ -229,7 +229,7 @@ describe('Escher', function () {
             assert.equal(escher.length(), 1)
         })
 
-        it('pops when clicking anywhere in retreat header if linkPop: false', function() {
+        it('pops when clicking anywhere in retreat header if linkPop is false', function() {
             escher.opts.linkPop = false
             escher.push(layer1)
             var $retreat = escher.top().$('.escher-step-retreat')
