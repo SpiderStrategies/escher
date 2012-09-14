@@ -21,7 +21,7 @@ describe('Escher', function () {
       assert.equal(escher.opts.topOffset, 20)
       assert.equal(escher.opts.leftOffset, 20)
       assert.equal(escher.opts.labelField, 'name')
-      assert.equal(escher.opts.linkPop, true)
+      assert.equal(escher.opts.linkPop, false)
     })
 
     it('adds the base step', function () {
@@ -216,7 +216,17 @@ describe('Escher', function () {
           assert.equal($("#container").children().size(), 1)
         })
 
-        it('pops only on a link click by default', function() {
+        it('pops on a click of the header by default', function() {
+            escher.push(layer1)
+            var $retreat = escher.top().$('.escher-step-retreat')
+
+            //Click on the main header div, it should pop
+            $retreat.trigger('click');
+            assert.equal(escher.length(), 1)
+        })
+
+        it('pops only by clicking the link if linkPop is true', function() {
+            escher.opts.linkPop = true
             escher.push(layer1)
             var $retreat = escher.top().$('.escher-step-retreat')
 
@@ -226,16 +236,6 @@ describe('Escher', function () {
 
             //Click on the link in the div, now it should pop
             $retreat.find('a').trigger('click')
-            assert.equal(escher.length(), 1)
-        })
-
-        it('pops when clicking anywhere in retreat header if linkPop is false', function() {
-            escher.opts.linkPop = false
-            escher.push(layer1)
-            var $retreat = escher.top().$('.escher-step-retreat')
-
-            //Click on the main header div, it should pop
-            $retreat.trigger('click');
             assert.equal(escher.length(), 1)
         })
       })
