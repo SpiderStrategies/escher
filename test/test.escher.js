@@ -139,8 +139,8 @@ describe('Escher', function () {
       it('sets the correct style for the new page', function () {
         escher.push(layer1)
         assert.equal(escher.top().$el.css('position'), 'absolute')
-        assert.equal(escher.top().$el.css('left'), '0px');
-        assert.equal(escher.top().$el.css('top'), '0px');
+        assert.equal(escher.top().$el.css('left'), '-1px');
+        assert.equal(escher.top().$el.css('top'), '-1px');
         assert.equal(escher.top().view.$el.css('margin-left'), escher.opts.leftOffset + 'px')
         assert.equal(escher.top().view.$el.css('margin-bottom'), -(escher.opts.bottomOffset) + 'px')
         assert.equal(escher.top().$el.css('height'), base.$el.css('height'))
