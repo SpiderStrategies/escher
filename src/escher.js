@@ -98,7 +98,7 @@
     className: 'escher-step',
 
     attributes: {
-      style: 'position: absolute; left: 0; top: 0; width: 100%'
+      style: 'position: absolute; left: -1px; top: -1px; width: 100%'
     },
 
     initialize: function (opts) {

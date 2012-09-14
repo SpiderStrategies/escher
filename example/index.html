@@ -20,18 +20,23 @@
       .base-layer {
         background-color: white;
         margin: 65px;
-        padding: 20px;
+        padding: 30px;
         border: 1px solid #ccc;
         width: 80%;
         -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;
         -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.3); -moz-box-shadow: 0 0 6px rgba(0,0,0,0.3); box-shadow: 0 0 6px rgba(0,0,0,0.3);
         -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
       }
+      
+      HEADER {
+        font-size: 1.4em;
+        font-weight: bold;
+      }
 
       footer {
         background-color: purple;
         margin: 65px;
-        padding: 20px;
+        padding: 30px;
         width: 700px;
       }
 
@@ -43,11 +48,23 @@
       }
 
       .escher-step-view {
+        padding: 30px;
+        background-color: white;
         -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
       }
-
+      
       .escher-step-retreat {
-        font-size: 26px;
+        margin: 19px 0 0 19px;
+      }
+      
+      @-webkit-keyframes show-background {
+        0% {background-color: rgba(0,0,0,0); -webkit-animate-timing-function: ease-in;}
+        100% {background-color: #EBE4E4;}
+      }
+      
+      @-webkit-keyframes show-background {
+        0% {background-color: rgba(0,0,0,0); -webkit-animate-timing-function: ease-in;}
+        100% {background-color: #EBE4E4;}
       }
 
     </style>
@@ -65,7 +82,7 @@
             },
 
             render: function () {
-              this.$el.html('<div><header><h1>Layer 1 Header</h1></header>' +
+              this.$el.html('<div><header>Base Layer</header>' +
                             '  <p>this is the content</p>' +
                             '  <p>this is the content</p>' +
                             '  <p>this is the content</p>' +
@@ -85,7 +102,7 @@
 
           var Layer1 = Backbone.View.extend({
             attributes: {
-              style: "background-color: white; padding: 20px"
+              style: "background-color: white;"
             },
 
             name: 'Pink Layer',
@@ -104,7 +121,7 @@
             },
 
             render: function () {
-              this.$el.html('<div style="height: 500px;">' +
+              this.$el.html('<div style="height: 500px;"><header>Pink Layer</header>' +
                             '  <p>this is layer 2.</p> ' +
                             '  <p>this is layer 2.</p> ' +
                             '  <button class="next">Next</button>' +
@@ -117,7 +134,7 @@
 
           var Layer2 = Backbone.View.extend({
             attributes: {
-              style: "border: solid 1px #8b6125; background-color: white; padding: 20px"
+              style: "border: solid 3px red;"
             },
 
             events: {
