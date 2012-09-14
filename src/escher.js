@@ -16,7 +16,7 @@
       leftOffset: 20,
       bottomOffset: 20,
       labelField: 'name',
-      linkPop: true
+      linkPop: false
     })
     this.opts = opts
     this.steps = [new StackedStep({view: opts.base, label: this.name, opts: this.opts})]
@@ -155,17 +155,15 @@
       this.view = null
       this.retreat = null
     }
-
   })
 
   var StepRetreat = Backbone.View.extend({
     className: "escher-step-retreat",
 
-    events: {},
-
     initialize: function (opts) {
       this.label = opts.label
 
+      this.events = {}
       this.events['click' + (opts.linkPop ? ' a' : '')] = 'close'
     },
 
