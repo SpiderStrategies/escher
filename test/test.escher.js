@@ -22,6 +22,7 @@ describe('Escher', function () {
       assert.equal(escher.opts.leftOffset, 20)
       assert.equal(escher.opts.labelField, 'name')
       assert.equal(escher.opts.linkPop, false)
+      assert.equal(escher.opts.animate, true)
     })
 
     it('adds the base step', function () {
@@ -30,6 +31,27 @@ describe('Escher', function () {
       assert.equal(escher.steps.length, 1)
       assert.equal(escher.length(), 1)
       assert.equal(escher.top(), escher.bottom())
+    })
+  })
+
+  describe('Animation', function () {
+    it('applies the correct classname to turn on css transitions', function () {
+      var escher = new Escher({ base: base })
+      var v = new Backbone.View
+      escher.push(v)
+      assert(escher.top().$el.hasClass('escher-animated'))
+      assert(escher.top().view.$el.hasClass('escher-animated'))
+      assert(escher.top().retreat.$el.hasClass('escher-animated'))
+    })
+
+    it('disables animation', function () {
+      var escher = new Escher({ base: base, animate: false })
+      assert(!escher.opts.animate)
+      var v = new Backbone.View
+      escher.push(v)
+      assert(!escher.top().$el.hasClass('escher-animated'))
+      assert(!escher.top().view.$el.hasClass('escher-animated'))
+      assert(!escher.top().retreat.$el.hasClass('escher-animated'))
     })
   })
 

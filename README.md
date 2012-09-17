@@ -114,6 +114,9 @@ view.trigger('resize')
 * linkPop: true
   * true: view is popped by clicking on the header link (default)
   * false: view is popped by clicking anywhere on the header
+* animate: true
+  * true: CSS stack transition animations are turned on (default)
+  * false: CSS stack transition animations are disabled
 
 #### Testing
 

@@ -16,10 +16,12 @@
       leftOffset: 20,
       bottomOffset: 20,
       labelField: 'name',
-      linkPop: false
+      linkPop: false,
+      animate: true
     })
     this.opts = opts
     this.steps = [new StackedStep({view: opts.base, label: this.name, opts: this.opts})]
+    if (this.opts.animate) { opts.base.$el.addClass('escher-animated') }
 
     this.on('changed', this._resize)
   }
@@ -116,6 +118,11 @@
 
     render: function () {
       this.view.$el.addClass('escher-step-view')
+      if (this.opts.animate) {
+        _.each([this.view.$el, this.$el, this.retreat.$el], function ($el) {
+          $el.addClass('escher-animated')
+        })
+      }
       this.view.trigger('view:activate')
 
       this.view.$el.css({
@@ -144,6 +151,7 @@
       this.view.delegateEvents()
       this.view.trigger('view:activate')
       this.view.$el.removeClass('escher-step-view-covered')
+      return this
     },
 
     destroy: function () {
@@ -161,6 +169,7 @@
     className: "escher-step-retreat",
 
     initialize: function (opts) {
+      this.opts = opts.opts
       this.label = opts.label
 
       this.events = {}

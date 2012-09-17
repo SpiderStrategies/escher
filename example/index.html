@@ -58,11 +58,10 @@
         margin: 19px 0 0 19px;
       }
 
-      @-webkit-keyframes show-background {
-        0% {background-color: rgba(0,0,0,0); -webkit-animate-timing-function: ease-in;}
-        100% {background-color: #EBE4E4;}
-      }
-
+      /*
+         You can override escher-transformation colors. We set the background color for the transformation
+         to match our background-color for the .escher-step
+      */
       @-webkit-keyframes show-background {
         0% {background-color: rgba(0,0,0,0); -webkit-animate-timing-function: ease-in;}
         100% {background-color: #EBE4E4;}
