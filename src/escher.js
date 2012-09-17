@@ -21,6 +21,7 @@
     })
     this.opts = opts
     this.steps = [new StackedStep({view: opts.base, label: this.name, opts: this.opts})]
+    if (this.opts.animate) { opts.base.$el.addClass('escher-animated') }
 
     this.on('changed', this._resize)
   }
@@ -106,10 +107,7 @@
       this.view = opts.view
       this.opts = opts.opts
       this.parent = opts.parent
-      this.retreat = new StepRetreat({label: opts.label, linkPop: this.opts.linkPop, animate: this.opts.animate}).render()
-      if (this.opts.animate) {
-        this.$el.addClass('escher-animated')
-      }
+      this.retreat = new StepRetreat({label: opts.label, linkPop: this.opts.linkPop}).render()
 
       // Yikes!
       var self = this
@@ -121,7 +119,9 @@
     render: function () {
       this.view.$el.addClass('escher-step-view')
       if (this.opts.animate) {
-        this.view.$el.addClass('escher-animated')
+        _.each([this.view.$el, this.$el, this.retreat.$el], function ($el) {
+          $el.addClass('escher-animated')
+        })
       }
       this.view.trigger('view:activate')
 
@@ -142,10 +142,6 @@
       this.view.undelegateEvents()
       this.view.trigger('view:deactivate')
       this.view.$el.addClass('escher-step-view-covered')
-      // this needs to be added for the base layer
-      if (this.opts.animate) {
-        this.view.$el.addClass('escher-animated')
-      }
       return this
     },
 
@@ -155,6 +151,7 @@
       this.view.delegateEvents()
       this.view.trigger('view:activate')
       this.view.$el.removeClass('escher-step-view-covered')
+      return this
     },
 
     destroy: function () {
@@ -174,9 +171,6 @@
     initialize: function (opts) {
       this.opts = opts.opts
       this.label = opts.label
-      if (opts.animate) {
-        this.$el.addClass('escher-animated')
-      }
 
       this.events = {}
       this.events['click' + (opts.linkPop ? ' a' : '')] = 'close'
