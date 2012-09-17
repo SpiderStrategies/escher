@@ -19,20 +19,20 @@
 }
 
 /* Escher Animation Styling */
-.escher-step.animated {
+.escher-step.escher-animated {
   -webkit-animation-name: show-background;
   -webkit-animation-duration: 800ms;
 }
-.escher-step-view.animated {
+.escher-step-view.escher-animated {
   -webkit-animation-name: toss;
 	-webkit-animation-duration: 0.5s;
 	-webkit-transform: rotate(0) scale(1) translate(0,0);
 }
-.escher-step-view-covered.animated {
+.escher-step-view-covered.escher-animated {
   -webkit-transition-property: visibility;
   -webkit-transition-duration: 300ms;
 }
-.escher-step-retreat.animated {
+.escher-step-retreat.escher-animated {
   opacity: 1;
   -webkit-animation-name: fade-in;
   -webkit-animation-duration: 1000ms;

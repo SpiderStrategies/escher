@@ -108,7 +108,7 @@
       this.parent = opts.parent
       this.retreat = new StepRetreat({label: opts.label, linkPop: this.opts.linkPop, animate: this.opts.animate}).render()
       if (this.opts.animate) {
-        this.$el.addClass('animated')
+        this.$el.addClass('escher-animated')
       }
 
       // Yikes!
@@ -121,7 +121,7 @@
     render: function () {
       this.view.$el.addClass('escher-step-view')
       if (this.opts.animate) {
-        this.view.$el.addClass('animated')
+        this.view.$el.addClass('escher-animated')
       }
       this.view.trigger('view:activate')
 
@@ -144,7 +144,7 @@
       this.view.$el.addClass('escher-step-view-covered')
       // this needs to be added for the base layer
       if (this.opts.animate) {
-        this.view.$el.addClass('animated')
+        this.view.$el.addClass('escher-animated')
       }
       return this
     },
@@ -175,7 +175,7 @@
       this.opts = opts.opts
       this.label = opts.label
       if (opts.animate) {
-        this.$el.addClass('animated')
+        this.$el.addClass('escher-animated')
       }
 
       this.events = {}
