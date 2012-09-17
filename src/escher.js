@@ -16,7 +16,8 @@
       leftOffset: 20,
       bottomOffset: 20,
       labelField: 'name',
-      linkPop: false
+      linkPop: false,
+      animate: true
     })
     this.opts = opts
     this.steps = [new StackedStep({view: opts.base, label: this.name, opts: this.opts})]
@@ -105,7 +106,10 @@
       this.view = opts.view
       this.opts = opts.opts
       this.parent = opts.parent
-      this.retreat = new StepRetreat({label: opts.label, linkPop: this.opts.linkPop}).render()
+      this.retreat = new StepRetreat({label: opts.label, linkPop: this.opts.linkPop, animate: this.opts.animate}).render()
+      if (this.opts.animate) {
+        this.$el.addClass('animated')
+      }
 
       // Yikes!
       var self = this
@@ -116,6 +120,9 @@
 
     render: function () {
       this.view.$el.addClass('escher-step-view')
+      if (this.opts.animate) {
+        this.view.$el.addClass('animated')
+      }
       this.view.trigger('view:activate')
 
       this.view.$el.css({
@@ -135,6 +142,10 @@
       this.view.undelegateEvents()
       this.view.trigger('view:deactivate')
       this.view.$el.addClass('escher-step-view-covered')
+      // this needs to be added for the base layer
+      if (this.opts.animate) {
+        this.view.$el.addClass('animated')
+      }
       return this
     },
 
@@ -161,7 +172,11 @@
     className: "escher-step-retreat",
 
     initialize: function (opts) {
+      this.opts = opts.opts
       this.label = opts.label
+      if (opts.animate) {
+        this.$el.addClass('animated')
+      }
 
       this.events = {}
       this.events['click' + (opts.linkPop ? ' a' : '')] = 'close'
