@@ -177,6 +177,7 @@
     },
 
     close: function (e) {
+      e.preventDefault()
       this.trigger('close')
     },
 

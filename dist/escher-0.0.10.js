@@ -1,5 +1,5 @@
 /*!
- * escher.js v0.0.9 
+ * escher.js v0.0.10 
  * Copyright 2012, Spider Strategies <nathan.bowser@spiderstrategies.com> 
  * escher.js may be freely distributed under the BSD license. 
 */
@@ -182,6 +182,7 @@
     },
 
     close: function (e) {
+      e.preventDefault()
       this.trigger('close')
     },
 

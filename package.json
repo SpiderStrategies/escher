@@ -1,6 +1,6 @@
 {
   "name": "escher",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Backbone extension library to stack views, as if you're stacking paper.",
   "main": "src/escher.js",
   "scripts": {
