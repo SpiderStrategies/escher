@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Escher Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
+    <script src="../src/escher.js"></script>
+    <link rel="stylesheet" type="text/css" href="../src/escher.css" />
+    <style type="text/css">
+
+      body {
+        background-color: #ebe1c5;
+      }
+
+      h1 {
+        margin: 20px;
+      }
+
+      .base-layer {
+        background-color: white;
+        margin: 65px;
+        padding: 30px;
+        border: 1px solid #ccc;
+        width: 80%;
+        -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;
+        -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.3); -moz-box-shadow: 0 0 6px rgba(0,0,0,0.3); box-shadow: 0 0 6px rgba(0,0,0,0.3);
+        -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
+      }
+
+      header {
+        font-size: 1.4em;
+        font-weight: bold;
+      }
+
+      footer {
+        background-color: purple;
+        margin: 65px;
+        padding: 30px;
+        width: 700px;
+      }
+
+      /* Custom escher styles */
+      .escher-step {
+        background-color: #EBE4E4;
+        border: 1px solid #bbb;
+        -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
+      }
+
+      .escher-step-view {
+        padding: 30px;
+        background-color: white;
+        -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
+      }
+
+      .escher-step-retreat {
+        margin: 19px 0 0 19px;
+      }
+
+      /*
+         You can override escher-transformation colors. We set the background color for the transformation
+         to match our background-color for the .escher-step
+      */
+      @-webkit-keyframes show-background {
+        0% {background-color: rgba(0,0,0,0); -webkit-animate-timing-function: ease-in;}
+        100% {background-color: #EBE4E4;}
+      }
+
+    </style>
+    <script>
+
+        $(function () {
+          var Base = Backbone.View.extend({
+
+            name: 'Base Layer',
+
+            className: 'base-layer',
+
+            events: {
+              'click .next': 'next'
+            },
+
+            render: function () {
+              this.$el.html('<div><header>Base Layer</header>' +
+                            '  <p>this is the content</p>' +
+                            '  <p>this is the content</p>' +
+                            '  <p>this is the content</p>' +
+                            '  <p><a href="#" class="next">Go crazy</a></p>' +
+                            '  <p>this is the content</p>' +
+                            '  <p>this is the content</p>' +
+                            '  <p>this is the content</p>' +
+                            '  <p>this is the content</p>' +
+                            '</div>')
+              return this
+            },
+
+            next: function (e) {
+              escher.push(new Layer1)
+            }
+          })
+
+          var Layer1 = Backbone.View.extend({
+            attributes: {
+              style: "background-color: white;"
+            },
+
+            name: 'Pink Layer',
+
+            events: {
+              'click .close': 'close',
+              'click .next': 'next'
+            },
+
+            next: function (e) {
+              escher.push(new Layer2)
+            },
+
+            close: function (e) {
+              escher.pop()
+            },
+
+            render: function () {
+              this.$el.html('<div style="height: 500px;"><header>Pink Layer</header>' +
+                            '  <p>this is layer 2.</p> ' +
+                            '  <p>this is layer 2.</p> ' +
+                            '  <button class="next">Next</button>' +
+                            '  <button class="close">Close</button>' +
+                            '  <p>this is layer 2.</p> ' +
+                            '</div>')
+              return this
+            }
+          })
+
+          var Layer2 = Backbone.View.extend({
+            attributes: {
+              style: "border: solid 3px red;"
+            },
+
+            events: {
+              'click .close': 'close'
+            },
+
+            name: 'Purple layer',
+
+            close: function (e) {
+              e.stopPropagation()
+              escher.pop()
+            },
+
+            render: function () {
+              this.$el.html('<div>' +
+                            '  <p style="padding-left: 30px; padding-top: 60px;">Layer 3</p>' +
+                            '  <button class="close">Close</button>' +
+                            '</div>')
+              return this
+            }
+          })
+
+          var base = new Base
+          var escher = new Backbone.Escher({
+            base: base
+          })
+          $("#container").append(base.render().el)
+        });
+    </script>
+  </head>
+  <body>
+    <div id="container">
+
+    </div>
+
+    <footer>
+      <div>
+        This shows up outside of the container.
+      </div>
+    </footer>
+  </body>
+</html>
