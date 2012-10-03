@@ -1,15 +1,9 @@
 /*!
- * escher.js v0.0.10 
+ * escher.js v0.0.11 
  * Copyright 2012, Spider Strategies <nathan.bowser@spiderstrategies.com> 
  * escher.js may be freely distributed under the BSD license. 
 */
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory)
-  } else {
-    factory(root.Backbone)
-  }
-}(this, function (Backbone) {
+(function (Backbone) {
   "use strict"
 
   var Escher = function (opts) {
@@ -195,4 +189,4 @@
   Backbone.Escher = Escher
 
   return Backbone
-}))
+})(window.Backbone)

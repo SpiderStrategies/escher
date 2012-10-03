@@ -10,8 +10,6 @@ Depends on [Underscore](http://underscorejs.org), [Backbone](http://backbonejs.o
 
 Download the Dev or Prod (uglified) [versions](https://github.com/SpiderStrategies/escher/tree/master/dist).
 
-#### Non-AMD
-
 ```
   <!-- Include jquery, backbone, underscore -->
   <script src="/assets/vendor/escher.js"></script>
@@ -19,22 +17,7 @@ Download the Dev or Prod (uglified) [versions](https://github.com/SpiderStrategi
 
 #### Using with AMD
 
-Define the path for escher and then you can require it.  Escher adds itself to Backbone, so the define returns backbone.
-
-```
-main.js
- {
-  paths:
-    { escher: '/vendor/backbone/plugins/escher'}
- }
-```
-
-Then simply require it, so it loads itself into backbone
-```
-define('core', ['escher'], function (Backbone) {
-  // Escher is loaded into backbone
-})
-```
+You should think twice about AMD, but if you're using it, use a shim.
 
 ### Usage
 
